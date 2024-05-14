@@ -1,9 +1,10 @@
 import os
 import time
-import tkinter as tk
-from tkinter import ttk
+#import tkinter as tk
+#from tkinter import ttk
 class View:   
     def printInfo(self,pidList):
+        '''
         table=tk.Tk()
         label=tk.Label(table,text="procs",font=('sans serif',30)).grid(row=0,columnspan=3)
         cols=('PID','Name','User','State','CPU Usage','Memory Usage','Num of Threads','Disk Read','Disk Write')
@@ -16,22 +17,22 @@ class View:
         for pid in pidList:
             listBox.insert("","end",values=pid)
         table.mainloop()
-        
         '''
+        
         os.system('clear')
-        list=sorted(pidList,key=lambda pidList:pidList[8])
+        list=sorted(pidList,key=lambda pidList:pidList[0])
         for inf in list:
-            print(f'{inf[0]} | {inf[1]} | {inf[2]} | {inf[3]} | ',end='')
-            if inf[4]==0:
+            print(f'{inf[0]} | {inf[1]} | {inf[2]} |  {inf[3]:.2f}% | ',end='')
+            print(f'{inf[4]/1000:.2f}MB | {inf[5]} | {len(inf[6])} | ',end='')
+            if inf[7]==0:
                 print(f'N/A | ',end='')
             else:
-                print(f'{inf[4]/1000000:.2f}MB | ',end='')
-            if inf[5]==0:
-                print(f'N/A | ',end='')
+                print(f'{inf[7]/1000000:.2f}MB | ',end='')
+            if inf[8]==0:
+                print(f'N/A')
             else:
-                print(f'{inf[5]/1000000:.2f}MB | ',end='')
-            print(f'{len(inf[6])} | {inf[7]/1000:.2f}MB | {inf[8]:.2f}%')
+                print(f'{inf[8]/1000000:.2f}MB')
         print(f'processos: {len(pidList)}\nhora: {time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec:2d}')
         time.sleep(2)
-        '''
+        
  
