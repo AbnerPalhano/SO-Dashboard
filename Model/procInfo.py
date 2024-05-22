@@ -1,6 +1,5 @@
 from pathlib import Path
-import time
-import os
+import asyncio
 import re
 import platform as pt
 
@@ -50,7 +49,7 @@ def ioRead(pid):
         return 0,0
 
 
-def getInfos(pid):
+async def getInfos(pid):
     infos=[0,"","",'',0,0,0,0,0.0]
     name,uid,state = statusRead(pid)
     read,write=ioRead(pid)
@@ -59,13 +58,13 @@ def getInfos(pid):
     infos[8]=int(write)
     return infos
          
-def getAllInfos():
-    pids=findPids()
-    pidList=list()
-    for pid in pids:
-        pidList.append(getInfos(pid))        
+async def getAllInfos():
+    pids = findPids()
+    tasks = [getInfos(pid) for pid in pids]
+    pidList = await asyncio.gather(*tasks)
     return pidList
     
+
 def getThreads(pid):
     try:
         threads=list()
@@ -107,7 +106,7 @@ def cpuUsage(pid):
     
 def main():
     try:
-        return getAllInfos()
+        return asyncio.run(getAllInfos())
     except KeyboardInterrupt:
         print(f'\nThe program has ended.\n')
     

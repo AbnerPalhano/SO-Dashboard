@@ -20,7 +20,7 @@ class View:
         '''
         
         os.system('clear')
-        list=sorted(pidList,key=lambda pidList:pidList[0])
+        list=sorted(pidList,key=lambda pidList:int(pidList[0]))
         for inf in list:
             print(f'{inf[0]} | {inf[1]} | {inf[2]} |  {inf[3]:.2f}% | ',end='')
             print(f'{inf[4]/1000:.2f}MB | {inf[5]} | {len(inf[6])} | ',end='')
