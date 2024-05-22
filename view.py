@@ -22,17 +22,17 @@ class View:
         os.system('clear')
         list=sorted(pidList,key=lambda pidList:int(pidList[0]))
         for inf in list:
-            print(f'{inf[0]} | {inf[1]} | {inf[2]} |  {inf[3]:.2f}% | ',end='')
-            print(f'{inf[4]/1000:.2f}MB | {inf[5]} | {len(inf[6])} | ',end='')
+            print(f'| {inf[0]:^6} | {inf[1]:^29} | {inf[2]:^15} |  {inf[3]:^6.2f}% | ',end='')
+            print(f'{inf[4]/1000:^8.2f}MB | {inf[5]:^1} | {len(inf[6]):^5} | ',end='')
             if inf[7]==0:
-                print(f'N/A | ',end='')
+                print(f'{"N/A":^11} | ',end='')
             else:
-                print(f'{inf[7]/1000000:.2f}MB | ',end='')
+                print(f'{inf[7]/1000000:^9.2f}MB | ',end='')
             if inf[8]==0:
-                print(f'N/A')
+                print(f'{"N/A":^11} |')
             else:
-                print(f'{inf[8]/1000000:.2f}MB')
+                print(f'{inf[8]/1000000:^9.2f}MB |')
         print(f'processos: {len(pidList)}\nhora: {time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec:2d}')
-        time.sleep(2)
+        time.sleep(1)
         
  
