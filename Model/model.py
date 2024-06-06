@@ -10,5 +10,8 @@ class Model:
         self.procList=list()
         self.procList=procInfo.main()
         return self.procList
-            
+    
+    def getProcInfo(self,pid):
+        proc=asyncio.run(procInfo.getInfos(pid))
+        return proc
     

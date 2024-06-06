@@ -9,6 +9,14 @@ class Controller:
     def getAll(self):
         self.model.getProcInfos()
         self.updateView()
-    def updateView(self):
+    def getProcView(self):
         procs=self.model.getProcInfos()
         self.view.printInfo(procs)
+    def getProcInfo(self,pid):
+        proc=self.model.getProcInfo(pid)
+        self.view.printProcInfo(proc)
+    
+    def clearView(self):
+        self.view.clear()
+    def bye(self):
+        self.view.bye()
