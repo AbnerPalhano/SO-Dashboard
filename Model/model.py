@@ -6,13 +6,10 @@ import Model.diskInfo as diskInfo
 
 class Model:
     def __init__(self) -> None:
-        self.procList = list()
-        self.globalInfo = list()
+        print("Model created")
 
     def getProcInfos(self):
-        self.procList = list()
-        self.procList = procInfo.main()
-        return self.procList
+        return procInfo.main()
 
     def getProcInfo(self, pid):
         return asyncio.run(procInfo.getInfos(pid))

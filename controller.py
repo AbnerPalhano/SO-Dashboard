@@ -7,17 +7,11 @@ class Controller:
         self.model = Model()
         self.view = View()
 
-    def getAll(self):
-        self.model.getProcInfos()
-        self.updateView()
-
     def getProcView(self):
-        procs = self.model.getProcInfos()
-        self.view.printInfo(procs)
+        self.view.printInfo(self.model.getProcInfos())
 
     def getProcInfo(self, pid):
-        proc = self.model.getProcInfo(pid)
-        self.view.printProcInfo(proc)
+        self.view.printProcInfo(self.model.getProcInfo(pid))
 
     def clearView(self):
         self.view.clear()
