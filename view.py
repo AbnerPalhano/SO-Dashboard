@@ -78,6 +78,7 @@ class View:
         time.sleep(1)
 
     def printStatx(self, Statx):
+        os.system("clear")
         for file, stat in Statx:
             print(f"{file.decode('utf-8')} File/Folder Information:")
             print(f"Device major: {stat.stx_dev_major}")

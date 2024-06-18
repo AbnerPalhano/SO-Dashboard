@@ -60,7 +60,12 @@ def main():
                     printProc(opt)
                 elif opt == "disk" or opt == "d":
                     controller.clearView()
-                    controller.getDiskInfo()
+                    while True:
+                        try:
+                            controller.getDiskInfo()
+                        except KeyboardInterrupt:
+                            break
+
                 elif opt == "exit" or opt == "e":
                     controller.clearView()
                     controller.bye()
