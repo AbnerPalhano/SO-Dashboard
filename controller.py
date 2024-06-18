@@ -13,6 +13,9 @@ class Controller:
     def getProcInfo(self, pid):
         self.view.printProcInfo(self.model.getProcInfo(pid))
 
+    def getDiskInfo(self):
+        self.view.printStatx(self.model.getDiskInfo())
+
     def clearView(self):
         self.view.clear()
 

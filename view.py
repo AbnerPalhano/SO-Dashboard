@@ -75,8 +75,27 @@ class View:
         print(
             f"threads: {len(proc[6])}\nhora: {time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}"
         )
-        sys.stdout.flush()
         time.sleep(1)
+
+    def printStatx(self, Statx):
+        for file, stat in Statx:
+            print(f"{file.decode('utf-8')} File/Folder Information:")
+            print(f"Device major: {stat.stx_dev_major}")
+            print(f"Device minor: {stat.stx_dev_minor}")
+            print(f"Inode: {stat.stx_ino}")
+            print(f"Mode: {oct(stat.stx_mode)}")
+            print(f"Number of hard links: {stat.stx_nlink}")
+            print(f"UID: {stat.stx_uid}")
+            print(f"GID: {stat.stx_gid}")
+            print(f"Size: {stat.stx_size} bytes")
+            print(f"Block size: {stat.stx_blksize}")
+            print(f"Number of blocks: {stat.stx_blocks}")
+            print(f"Last access time: {stat.stx_atime.tv_sec}")
+            print(f"Creation time: {stat.stx_btime.tv_sec}")
+            print(f"Last modification time: {stat.stx_mtime.tv_sec}")
+            print(f"Last status change time: {stat.stx_ctime.tv_sec}")
+            print(f"\n")
+        input()
 
     def clear(self):
         os.system("clear")
