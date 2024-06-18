@@ -1,5 +1,6 @@
 import os
 import time
+import sys
 
 
 # import tkinter as tk
@@ -7,11 +8,11 @@ import time
 class View:
     def printInfo(self, pidList):
         os.system("clear")
+
         list = sorted(pidList, key=lambda pidList: int(pidList[0]))
         print(
             f'| {"PID":^6} | {"Name":^29} | {"User":^15} | {"CPU":^8} | {"Memory":^10} | {"State":^7} | {"Threads":^5} | {"Read":^11} | {"Write":^11} |'
         )
-
         for inf in list:
             print(
                 f"| {inf[0]:^6} | {inf[1]:^29} | {inf[2]:^15} |  {inf[3]:^6.2f}% | ",
@@ -74,6 +75,7 @@ class View:
         print(
             f"threads: {len(proc[6])}\nhora: {time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}"
         )
+        sys.stdout.flush()
         time.sleep(1)
 
     def clear(self):

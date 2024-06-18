@@ -42,15 +42,15 @@ def main():
             controller.clearView()
             try:
                 opt = input(
-                    f"start - print all processes\n"
-                    + "pid - print specific process info\n"
-                    + "disk - print informations about disk and partitions (wip)\n"
-                    + "exit - exit the program\n"
+                    f"s | start - print all processes\n"
+                    + "p | pid - print specific process info\n"
+                    + "d | disk - print informations about disk and partitions (wip)\n"
+                    + "e | exit - exit the program\n"
                     + "Enter option: "
                 )
-                if opt == "start":
+                if opt == "start" or opt == "s":
                     printProcs()
-                elif opt == "pid":
+                elif opt == "pid" or opt == "p":
                     controller.clearView()
                     try:
                         printProc(input("Enter PID: "))
@@ -58,10 +58,10 @@ def main():
                         continue
                 elif opt.isnumeric():
                     printProc(opt)
-                elif opt == "disk":
+                elif opt == "disk" or opt == "d":
                     controller.clearView()
                     controller.getDiskInfo()
-                elif opt == "exit":
+                elif opt == "exit" or opt == "e":
                     controller.clearView()
                     controller.bye()
                     break
