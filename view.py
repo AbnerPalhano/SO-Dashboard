@@ -121,4 +121,4 @@ class View:
         os.system("clear")
 
     def bye(self):
-        print("Bye! I hope this program made you happy :)")
+        print("Bye! I hope you liked this program :)")

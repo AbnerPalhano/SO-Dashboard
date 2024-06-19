@@ -60,7 +60,7 @@ def main():
                     while True:
                         searchPath = bytes(
                             input(
-                                "enter path (leave empty to start at the project folder):"
+                                "enter path (leave empty to start at the project folder): "
                             ).encode("utf-8")
                         )
                         if not searchPath:
@@ -83,14 +83,17 @@ def main():
                     while True:
                         try:
                             path = controller.getDiskInfo(searchPath)
-                            if not os.path.isdir(path):
-                                print(f"{searchPath} is a file, not a directory!")
-                                continue
                             while True:
                                 searchPath = os.path.join(
                                     path,
-                                    bytes(input(f"enter new path:").encode("utf-8")),
+                                    bytes(input(f"Enter new path: ").encode("utf-8")),
                                 )
+                                if os.path.isfile(searchPath):
+                                    print(
+                                        f"'{searchPath.decode('utf-8')}' is a file, not a directory!",
+                                        end=" ",
+                                    )
+                                    continue
                                 if not os.path.exists(searchPath):
                                     print(
                                         f"'{searchPath.decode('utf-8')}' don't exist",

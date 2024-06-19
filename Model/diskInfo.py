@@ -46,8 +46,6 @@ async def main(basepath):
     try:
         if re.search("[..]", str(basepath)):
             basepath = bytes(os.path.dirname(os.path.dirname(basepath)))
-        #        if basepath.isdigit:
-        #            basepath = bytes(basepath)
         filenames = os.listdir(os.path.abspath(basepath))
         statx = await asyncio.gather(
             *[
