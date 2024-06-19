@@ -42,20 +42,25 @@ async def readStatxAsync(filename):
     return filename, statxbuf
 
 
-async def main():
+async def main(basepath):
     try:
-        filename = [
-            b"/home/abner",
-            b"/",
-            b"/proc",
-            b"/home/linuxbrew",
-            b"/home/abner/Downloads/lenovo_z_p_series_hmm_v1.0.pdf",
-        ]
-        return await asyncio.gather(*[readStatxAsync(file) for file in filename])
+        if re.search("[..]", str(basepath)):
+            basepath = bytes(os.path.dirname(os.path.dirname(basepath)))
+        #        if basepath.isdigit:
+        #            basepath = bytes(basepath)
+        filenames = os.listdir(os.path.abspath(basepath))
+        statx = await asyncio.gather(
+            *[
+                readStatxAsync(bytes(os.path.abspath(file)))
+                for file in [os.path.join(basepath, file) for file in filenames]
+            ]
+        )
+        return statx, basepath
     except MemoryError as e:
         print(f"Error: {e}")
         quit(1)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    ...
+    asyncio.run(main(b"/"))

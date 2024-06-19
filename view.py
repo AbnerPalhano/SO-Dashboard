@@ -6,6 +6,18 @@ import sys
 # import tkinter as tk
 # from tkinter import ttk
 class View:
+    def printMenu(self):
+        print("====================-----Dash board-----=====================")
+        print("||command   -  description                                 ||")
+        print(
+            f"||s | start -  print all processes                         ||\n"
+            + "||p | pid   -  print specific process info                 ||\n"
+            + "||d | disk  -  print informations about disk and partitions||\n"
+            + "||e | exit  -  exit the program                            ||"
+        )
+        print("=============================================================")
+        print("Enter Command: ", end="")
+
     def printInfo(self, pidList):
         os.system("clear")
 
@@ -33,6 +45,8 @@ class View:
         print(
             f"processos: {len(pidList)}\nhora: {time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}"
         )
+        print("Press CTRL+C to pause or return to menu.")
+        print("It will return to the menu automatically if pressed twice.")
         time.sleep(1)
 
     def printProcInfo(self, proc):
@@ -75,12 +89,15 @@ class View:
         print(
             f"threads: {len(proc[6])}\nhora: {time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}"
         )
+        print("Press CTRL+C to pause or return to menu.")
+        print("It will return to the menu automatically if pressed twice.")
+
         time.sleep(1)
 
     def printStatx(self, Statx):
         os.system("clear")
-        for file, stat in Statx:
-            print(f"{file.decode('utf-8')} File/Folder Information:")
+        for file, stat in Statx[0]:
+            print(f"\n'{file.decode('utf-8')}'")
             print(f"Device major: {stat.stx_dev_major}")
             print(f"Device minor: {stat.stx_dev_minor}")
             print(f"Inode: {stat.stx_ino}")
@@ -95,11 +112,13 @@ class View:
             print(f"Creation time: {stat.stx_btime.tv_sec}")
             print(f"Last modification time: {stat.stx_mtime.tv_sec}")
             print(f"Last status change time: {stat.stx_ctime.tv_sec}")
-            print(f"\n")
-        input()
+        print(f"\nContent of '{Statx[1].decode('utf-8')}':")
+        for file, stat in Statx[0]:
+            print(f"{os.path.basename(file.decode('utf-8'))} ", end="")
+        print()
 
     def clear(self):
         os.system("clear")
 
     def bye(self):
-        print("Bye!")
+        print("Bye! I hope this program made you happy :)")

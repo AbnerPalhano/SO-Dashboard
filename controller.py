@@ -1,5 +1,7 @@
 from Model.model import Model
 from view import View
+import os
+import re
 
 
 class Controller:
@@ -13,8 +15,13 @@ class Controller:
     def getProcInfo(self, pid):
         self.view.printProcInfo(self.model.getProcInfo(pid))
 
-    def getDiskInfo(self):
-        self.view.printStatx(self.model.getDiskInfo())
+    def getDiskInfo(self, basepath):
+        result = self.model.getDiskInfo(basepath)
+        self.view.printStatx(result)
+        return result[1]
+
+    def printMenu(self):
+        self.view.printMenu()
 
     def clearView(self):
         self.view.clear()

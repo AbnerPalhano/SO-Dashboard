@@ -1,6 +1,8 @@
 from Model.model import Model
 from view import View
 from controller import Controller
+import os
+import re
 
 
 def main():
@@ -40,17 +42,12 @@ def main():
     def run():
         while True:
             controller.clearView()
+            controller.printMenu()
             try:
-                opt = input(
-                    f"s | start - print all processes\n"
-                    + "p | pid - print specific process info\n"
-                    + "d | disk - print informations about disk and partitions (wip)\n"
-                    + "e | exit - exit the program\n"
-                    + "Enter option: "
-                )
-                if opt == "start" or opt == "s":
+                opt = input()
+                if opt == "start" or opt == "s" or opt == "S":
                     printProcs()
-                elif opt == "pid" or opt == "p":
+                elif opt == "pid" or opt == "p" or opt == "P":
                     controller.clearView()
                     try:
                         printProc(input("Enter PID: "))
@@ -58,15 +55,54 @@ def main():
                         continue
                 elif opt.isnumeric():
                     printProc(opt)
-                elif opt == "disk" or opt == "d":
+                elif opt == "disk" or opt == "d" or opt == "D":
                     controller.clearView()
                     while True:
+                        searchPath = bytes(
+                            input(
+                                "enter path (leave empty to start at the project folder):"
+                            ).encode("utf-8")
+                        )
+                        if not searchPath:
+                            searchPath = bytes(os.getcwd().encode("utf-8"))
+                            break
+                        elif re.search("[..]", str(searchPath)):
+                            searchPath = bytes(
+                                os.path.dirname(os.getcwd().encode("utf-8"))
+                            )
+                        elif not re.search("^[/]", str(searchPath)):
+                            searchPath = bytes(str("/").encode("utf-8")) + searchPath
+
+                        if not os.path.exists(searchPath):
+                            input(
+                                f"'{searchPath.decode('utf-8')}' don't exist, press any key to continue..."
+                            )
+                            controller.clearView()
+                            continue
+                        break
+                    while True:
                         try:
-                            controller.getDiskInfo()
+                            path = controller.getDiskInfo(searchPath)
+                            if not os.path.isdir(path):
+                                print(f"{searchPath} is a file, not a directory!")
+                                continue
+                            while True:
+                                searchPath = os.path.join(
+                                    path,
+                                    bytes(input(f"enter new path:").encode("utf-8")),
+                                )
+                                if not os.path.exists(searchPath):
+                                    print(
+                                        f"'{searchPath.decode('utf-8')}' don't exist",
+                                        end=", ",
+                                    )
+                                    continue
+                                break
+
                         except KeyboardInterrupt:
                             break
 
-                elif opt == "exit" or opt == "e":
+                elif opt == "exit" or opt == "e" or opt == "E":
                     controller.clearView()
                     controller.bye()
                     break
