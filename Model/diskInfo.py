@@ -5,14 +5,38 @@ import asyncio
 import ctypes
 import Model.macros as macros
 
-# /proc/partitions
-# /proc/diskstats
-# /proc/ioports
-# /proc/iomem
-# /sys/block
-# inodes - files metadata
+
+# lê as partições do disco em /proc/partitions
+def readpartitions():
+    diskInfo = []
+    partitions = []
+    with open(f"/proc/partitions", "r") as file:
+        for line in file:
+            if "major" in line:
+                continue
+            split = re.split("[\s]+", str(line))
+            if len(split) > 4:
+                partitions.append(
+                    [
+                        split[1],
+                        split[2],
+                        float(split[3])
+                        / 1048576,  # blocks/1024^2 para pegar o tamanho do disco em GB
+                        split[4],
+                        split[3],
+                    ]
+                )
+    with open(f"/proc/diskstats", "r") as file:
+        for line in file:
+            split = re.split("[\s]+", str(line))
+            for part in partitions:
+                if part[3] == split[3]:
+                    diskInfo.append([part, split[3]])
+
+    return partitions
 
 
+# pega o tipo do arquivo
 def getFileType(stat):
     type = ""
     if macros.S_ISLNK(stat):
@@ -32,6 +56,7 @@ def getFileType(stat):
     return type
 
 
+# pega as permissoes do arquivo
 def getPermissions(stat):
     isDir = "d" if (stat & macros.S_IFDIR) else "-"
     user = (
@@ -52,6 +77,7 @@ def getPermissions(stat):
     return isDir + user + group + others
 
 
+# pega os metadados do arquivo com a chamada de sistema statx
 async def readStatxAsync(filename):
     libc = ctypes.CDLL("libc.so.6")
     libc.syscall.argtypes = (
@@ -83,7 +109,8 @@ async def readStatxAsync(filename):
     return filename, [statxbuf, filetype, filePermissions]
 
 
-async def main(basepath):
+# pega os metadados de todos os arquivos em um diretorio
+async def getStatx(basepath):
     try:
         if re.search("[..]", str(basepath)):
             basepath = bytes(os.path.dirname(os.path.dirname(basepath)))
@@ -102,4 +129,4 @@ async def main(basepath):
 
 if __name__ == "__main__":
     ...
-    asyncio.run(main(b"/"))
+    asyncio.run(getStatx(b"/"))

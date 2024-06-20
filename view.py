@@ -9,89 +9,123 @@ import Model.procInfo as procInfo
 # from tkinter import ttk
 class View:
     def printMenu(self):
-        print("====================-----Dash board-----=====================")
-        print("||command   -  description                                 ||")
-        print(
-            f"||s | start -  print all processes                         ||\n"
-            + "||p | pid   -  print specific process info                 ||\n"
-            + "||d | disk  -  print informations about disk and partitions||\n"
-            + "||e | exit  -  exit the program                            ||"
-        )
-        print("=============================================================")
+        print("========================------SOdashboard------========================")
+        print("|| commands -                  descriptions                          ||")
+        print("||s | start -  print all processes                                   ||")
+        print("||p | pid   -  print specific process info                           ||")
+        print("||d | disk  -  print informations about disk and partitions          ||")
+        print("||e | exit  -  exit the program                                      ||")
+        print("||-------------------------------------------------------------------||")
+        print("||info: Press ctrl+c to return to the menu from any of the options   ||")
+        print("=======================================================================")
         print("Enter Command: ", end="")
+
+    def printDiskInfoMenu(self):
+        print("=======================-------Disk Info-------=========================")
+        print("||    commands    -                   descriptions                   ||")
+        print("|| f | files      - explore files and print files informations       ||")
+        print("|| p | partitions - show a few informations about disk and partitions||")
+        print("||-------------------------------------------------------------------||")
+        print("||info: Press ctrl+c to return to the menu from files or partitions  ||")
+        print("=======================================================================")
+
+    def printPartitionsInfo(self, partitions):
+        print("=======================-------Disk Info-------=========================")
+        print(
+            f"||     device name      |      device id      |        size          ||"
+        )
+        for part in partitions:
+            id = f"{part[0]},{part[1]}"
+            size = f"{float(part[2]):.2f}GB"
+            print(f"||{part[3]:21} | {id:19} | {size:21}||")
+        print("=======================================================================")
 
     def printInfo(self, pidList):
         os.system("clear")
 
         list = sorted(pidList, key=lambda pidList: int(pidList[0]))
         print(
-            f'| {"PID":^6} | {"Name":^29} | {"User":^15} | {"CPU":^8} | {"Memory":^10} | {"State":^7} | {"Threads":^5} | {"Read":^11} | {"Write":^11} |'
+            f'| {"PID":^6} | {"Name":^29} | {"User":^15} | {"CPU":^8} | {"Memory":^10} | {"State":^5} | {"Threads":^5} | {"Read":^11} | {"Write":^11} | {"opened files":^12} |'
         )
         for inf in list:
             print(
                 f"| {inf[0]:^6} | {inf[1]:^29} | {inf[2]:^15} |  {inf[3]:^6.2f}% | ",
                 end="",
             )
-            print(f"{inf[4]/1000:^8.2f}MB | {inf[5]:^7} | {len(inf[6]):^7} | ", end="")
+            memory = f"{inf[4]/1000:^.2f} MB"
+            print(f"{memory:^10} | {inf[5]:^5} | {len(inf[6]):^7} | ", end="")
             if inf[7] == 0:
                 print(f'{"N/A":^11} | ', end="")
             else:
-                print(f"{inf[7]/1000000:^9.2f}MB | ", end="")
+                read = f"{inf[7]/1000000:^.2f} MB"
+                print(f"{read:^11} | ", end="")
             if inf[8] == 0:
-                print(f'{"N/A":^11} |')
+                print(f'{"N/A":^11} | ', end="")
             else:
-                print(f"{inf[8]/1000000:^9.2f}MB |")
+                write = f"{inf[8]/1000000:^.2f} MB"
+                print(f"{write:^11} | ", end="")
+            print(f"{inf[9]:^12} |")
+
         print(
-            f'| {"PID":^6} | {"Name":^29} | {"User":^15} | {"CPU":^8} | {"Memory":^10} | {"State":^7} | {"Threads":^5} | {"Read":^11} | {"Write":^11} |'
+            f'| {"PID":^6} | {"Name":^29} | {"User":^15} | {"CPU":^8} | {"Memory":^10} | {"State":^5} | {"Threads":^5} | {"Read":^11} | {"Write":^11} | {"opened files":^12} |'
         )
         print(
             f"processos: {len(pidList)}\nhora: {time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}"
         )
-        print("Press CTRL+C to pause or return to menu.")
+        print("Press ctrl+c to pause or return to menu.")
         print("It will return to the menu automatically if pressed twice.")
         time.sleep(1)
 
     def printProcInfo(self, proc):
         os.system("clear")
         print(
-            f'| {"PID":^6} | {"Name":^29} | {"User":^15} | {"CPU":^8} | {"Memory":^10} | {"State":^7} | {"Read":^11} | {"Write":^11} |'
+            f'| {"PID":^6} | {"Name":^29} | {"User":^15} | {"CPU":^8} | {"Memory":^10} | {"State":^7} | {"Read":^11} | {"Write":^11} | {"opened files":^12} |'
         )
         print(
             f"| {proc[0]:^6} | {proc[1]:^29} | {proc[2]:^15} |  {proc[3]:^6.2f}% | ",
             end="",
         )
-        print(f"{proc[4]/1000:^8.2f}MB | {proc[5]:^7} | ", end="")
+        memory = f"{proc[4]/1000:^.2f} MB"
+        print(f"{memory:^10} | {proc[5]:^7} | ", end="")
         if proc[7] == 0:
             print(f'{"N/A":^11} | ', end="")
         else:
-            print(f"{proc[7]/1000000:^9.2f}MB | ", end="")
+            read = f"{proc[7]/1000000:^.2f} MB"
+            print(f"{read:^11} | ", end="")
         if proc[8] == 0:
-            print(f'{"N/A":^11} |')
+            print(f'{"N/A":^11} | ', end="")
         else:
-            print(f"{proc[8]/1000000:^9.2f}MB |")
+            write = f"{proc[8]/1000000:^.2f} MB"
+            print(f"{write:^11} | ", end="")
+        print(f"{proc[9]:^12} |")
         print(
-            f'Threads:\n{"":^6}| {"TID":^6} | {"Name":^29} | {"User":^15} | {"CPU":^8} | {"Memory":^10} | {"State":^7} | {"Read":^11} | {"Write":^11} |'
+            f'{"":^6}| {"PID":^6} | {"Name":^29} | {"User":^15} | {"CPU":^8} | {"Memory":^10} | {"State":^7} | {"Read":^11} | {"Write":^11} | {"opened files":^12} |'
         )
+
         for thread in proc[6]:
 
             print(
                 f"{'':^6}| {thread[0]:^6} | {thread[1]:^29} | {thread[2]:^15} |  {thread[3]:^6.2f}% | ",
                 end="",
             )
-            print(f"{thread[4]/1000:^8.2f}MB | {thread[5]:^7} | ", end="")
+            memory = f"{thread[4]/1000:^.2f} MB"
+            print(f"{memory:^10} | {thread[5]:^7} | ", end="")
             if thread[6] == 0:
                 print(f'{"N/A":^11} | ', end="")
             else:
-                print(f"{thread[6]/1000000:^9.2f}MB | ", end="")
+                read = f"{thread[6]/1000000:^.2f} MB"
+                print(f"{read:^11} | ", end="")
             if thread[7] == 0:
-                print(f'{"N/A":^11} |')
+                print(f'{"N/A":^11} | ', end="")
             else:
-                print(f"{thread[7]/1000000:^9.2f}MB |")
+                write = f"{thread[7]/1000000:^.2f} MB"
+                print(f"{write:^11} | ", end="")
+            print(f"{thread[8]:^12} |")
 
         print(
             f"threads: {len(proc[6])}\nhora: {time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}"
         )
-        print("Press CTRL+C to pause or return to menu.")
+        print("Press ctrl+c to pause or return to menu.")
         print("It will return to the menu automatically if pressed twice.")
 
         time.sleep(1)

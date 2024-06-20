@@ -14,5 +14,8 @@ class Model:
     def getProcInfo(self, pid):
         return asyncio.run(procInfo.getInfos(pid))
 
-    def getDiskInfo(self, basepath):
-        return asyncio.run(diskInfo.main(basepath))
+    def getFilesInfo(self, basepath):
+        return asyncio.run(diskInfo.getStatx(basepath))
+
+    def getDiskInfo(self):
+        return diskInfo.readpartitions()

@@ -1,11 +1,37 @@
 from pathlib import Path
 import asyncio
 import re
+import os
+import Model.macros as macros
 
 # /proc/{pid}/net/dev é onde tem informações de uso de rede.
 # /proc/stat info de uso global do processador
 # /proc/{pid}/stat info de uso do processador no processo ((utime+stime)/starttime)
 # /proc/meminfo info de uso global da ram
+
+
+def getReadFiles(pid):
+    try:
+        if len(list(Path(f"/proc/{pid}/fdinfo/").glob("[0-9]*"))) == 0:
+            return 0
+        opened = len(list(Path(f"/proc/{pid}/fdinfo/").glob("[0-9]*")))
+        return opened
+    except PermissionError:
+        return 0
+    except FileNotFoundError:
+        return 0
+
+
+def getThreadReadFiles(pid, tid):
+    try:
+        if len(list(Path(f"/proc/{pid}/task/{tid}/fdinfo/").glob("[0-9]*"))) == 0:
+            return 0
+        opened = len(list(Path(f"/proc/{pid}/task/{tid}/fdinfo/").glob("[0-9]*")))
+        return opened
+    except PermissionError:
+        return 0
+    except FileNotFoundError:
+        return 0
 
 
 def findPids():
@@ -90,7 +116,7 @@ def threadIoRead(pid, tid):
 
 
 async def getInfos(pid):
-    infos = [0, "", "", "", 0, 0, list(), 0, 0]
+    infos = [0, "", "", "", 0, 0, list(), 0, 0, list()]
     name, uid, state = statusRead(pid)
     read, write = ioRead(pid)
     infos[0], infos[1], infos[2], infos[3] = (
@@ -106,11 +132,12 @@ async def getInfos(pid):
         int(read),
     )
     infos[8] = int(write)
+    infos[9] = getReadFiles(pid)
     return infos
 
 
 def getThreadInfos(pid, tid):
-    infos = [0, "", "", "", 0, 0, 0, 0]
+    infos = [0, "", "", "", 0, 0, 0, 0, list()]
     name, uid, state = threadStatusRead(pid, tid)
     read, write = threadIoRead(pid, tid)
     infos[0], infos[1], infos[2], infos[3] = (
@@ -119,11 +146,12 @@ def getThreadInfos(pid, tid):
         procUser(uid),
         threadCpuUsage(pid, tid),
     )
-    infos[4], infos[5], infos[6], infos[7] = (
+    infos[4], infos[5], infos[6], infos[7], infos[8] = (
         threadMemoryUsage(pid, tid),
         str(state),
         int(read),
         int(write),
+        getThreadReadFiles(pid, tid),
     )
     return infos
 

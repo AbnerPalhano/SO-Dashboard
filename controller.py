@@ -15,13 +15,19 @@ class Controller:
     def getProcInfo(self, pid):
         self.view.printProcInfo(self.model.getProcInfo(pid))
 
-    def getDiskInfo(self, basepath):
-        result = self.model.getDiskInfo(basepath)
+    def getFilesInfo(self, basepath):
+        result = self.model.getFilesInfo(basepath)
         self.view.printStatx(result)
         return result[1]
 
+    def getDiskInfo(self):
+        self.view.printPartitionsInfo(self.model.getDiskInfo())
+
     def printMenu(self):
         self.view.printMenu()
+
+    def printDiskInfoMenu(self):
+        self.view.printDiskInfoMenu()
 
     def clearView(self):
         self.view.clear()

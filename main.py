@@ -57,53 +57,100 @@ def main():
                     printProc(opt)
                 elif opt == "disk" or opt == "d" or opt == "D":
                     controller.clearView()
-                    while True:
-                        searchPath = bytes(
-                            input(
-                                "enter path (leave empty to start at the project folder): "
-                            ).encode("utf-8")
-                        )
-                        if not searchPath:
-                            searchPath = bytes(os.getcwd().encode("utf-8"))
-                            break
-                        elif re.search("[..]", str(searchPath)):
-                            searchPath = bytes(
-                                os.path.dirname(os.getcwd().encode("utf-8"))
-                            )
-                        elif not str(searchPath).startswith("/", 0, 0):
-                            searchPath = bytes(str("/").encode("utf-8")) + searchPath
-
-                        if not os.path.exists(searchPath):
-                            input(
-                                f"'{searchPath.decode('utf-8')}' don't exist, press any key to continue..."
-                            )
-                            controller.clearView()
-                            continue
-                        break
-                    while True:
+                    controller.printDiskInfoMenu()
+                    exit = False
+                    stay = True
+                    while True and not exit and stay:
                         try:
-                            path = controller.getDiskInfo(searchPath)
-                            while True:
-                                searchPath = os.path.join(
-                                    path,
-                                    bytes(input(f"Enter new path: ").encode("utf-8")),
+                            controller.clearView()
+                            controller.printDiskInfoMenu()
+
+                            optDiskInfo = input("Enter Command: ")
+                        except KeyboardInterrupt:
+                            exit = True
+                            break
+                        if (
+                            optDiskInfo == "partitions"
+                            or optDiskInfo == "p"
+                            or optDiskInfo == "P"
+                        ):
+                            controller.clearView()
+                            controller.getDiskInfo()
+                            try:
+                                input(
+                                    "press any key to continue, or ctrl+c to return to the menu"
                                 )
-                                if os.path.isfile(searchPath):
-                                    print(
-                                        f"'{searchPath.decode('utf-8')}' is a file, not a directory!",
-                                        end=" ",
+                            except KeyboardInterrupt:
+                                exit = True
+                                break
+                        elif (
+                            optDiskInfo == "files"
+                            or optDiskInfo == "f"
+                            or optDiskInfo == "F"
+                        ):
+                            stay = True
+                            while True:
+                                try:
+                                    controller.clearView()
+                                    searchPath = bytes(
+                                        input(
+                                            "enter path (leave empty to start at the project folder or enter the full path, starting from the root folder '/'): "
+                                        ).encode("utf-8")
                                     )
-                                    continue
+                                except KeyboardInterrupt:
+                                    stay = False
+                                    exit = True
+                                    break
+                                if not searchPath:
+                                    searchPath = bytes(os.getcwd().encode("utf-8"))
+                                    break
+                                elif re.search("[..]", str(searchPath)):
+                                    searchPath = bytes(
+                                        os.path.dirname(os.getcwd().encode("utf-8"))
+                                    )
+                                elif not str(searchPath).startswith("/", 0, 0):
+                                    searchPath = (
+                                        bytes(str("/").encode("utf-8")) + searchPath
+                                    )
+
                                 if not os.path.exists(searchPath):
-                                    print(
-                                        f"'{searchPath.decode('utf-8')}' don't exist",
-                                        end=", ",
+                                    input(
+                                        f"'{searchPath.decode('utf-8')}' don't exist, press any key to continue..."
                                     )
+                                    controller.clearView()
                                     continue
                                 break
+                            while True and stay:
+                                try:
+                                    path = controller.getFilesInfo(searchPath)
+                                    while True and stay:
+                                        try:
+                                            searchPath = os.path.join(
+                                                path,
+                                                bytes(
+                                                    input(
+                                                        f"Enter new path (Enter '..' to go to parent folder): "
+                                                    ).encode("utf-8")
+                                                ),
+                                            )
+                                        except KeyboardInterrupt:
+                                            stay = False
+                                            break
+                                        if os.path.isfile(searchPath):
+                                            print(
+                                                f"'{searchPath.decode('utf-8')}' is a file, not a directory!"
+                                            )
+                                            continue
+                                        if not os.path.exists(searchPath):
+                                            print(
+                                                f"'{searchPath.decode('utf-8')}' don't exist!"
+                                            )
+                                            continue
+                                        break
 
-                        except KeyboardInterrupt:
-                            break
+                                except KeyboardInterrupt:
+                                    stay = False
+                                    break
 
                 elif opt == "exit" or opt == "e" or opt == "E":
                     controller.clearView()
