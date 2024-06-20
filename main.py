@@ -70,7 +70,7 @@ def main():
                             searchPath = bytes(
                                 os.path.dirname(os.getcwd().encode("utf-8"))
                             )
-                        elif not re.search("^[/]", str(searchPath)):
+                        elif not str(searchPath).startswith("/", 0, 0):
                             searchPath = bytes(str("/").encode("utf-8")) + searchPath
 
                         if not os.path.exists(searchPath):

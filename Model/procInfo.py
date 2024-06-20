@@ -15,6 +15,13 @@ def findPids():
     return pids
 
 
+def procGroup(Gid):
+    for line in open(f"/etc/group", "r"):
+        split = re.split(r":", line)
+        if f"{Gid}" in split[2]:
+            return split[0]
+
+
 def procUser(Uid):
     for line in open(f"/etc/passwd", "r"):
         split = re.split(r":", line)

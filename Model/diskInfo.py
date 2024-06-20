@@ -13,6 +13,45 @@ import Model.macros as macros
 # inodes - files metadata
 
 
+def getFileType(stat):
+    type = ""
+    if macros.S_ISLNK(stat):
+        type = "symbolic link"
+    if macros.S_ISREG(stat):
+        type = "regular file"
+    if macros.S_ISDIR(stat):
+        type = "directory"
+    if macros.S_ISCHR(stat):
+        type = "character device"
+    if macros.S_ISBLK(stat):
+        type = "block device"
+    if macros.S_ISFIFO(stat):
+        type = "FIFO"
+    if macros.S_ISSOCK(stat):
+        type = "socket"
+    return type
+
+
+def getPermissions(stat):
+    isDir = "d" if (stat & macros.S_IFDIR) else "-"
+    user = (
+        ("r" if (stat & macros.S_IRUSR) else "-")
+        + ("w" if (stat & macros.S_IWUSR) else "-")
+        + ("x" if (stat & macros.S_IXUSR) else "-")
+    )
+    group = (
+        ("r" if (stat & macros.S_IRGRP) else "-")
+        + ("w" if (stat & macros.S_IWGRP) else "-")
+        + ("x" if (stat & macros.S_IXGRP) else "-")
+    )
+    others = (
+        ("r" if (stat & macros.S_IROTH) else "-")
+        + ("w" if (stat & macros.S_IWOTH) else "-")
+        + ("x" if (stat & macros.S_IXOTH) else "-")
+    )
+    return isDir + user + group + others
+
+
 async def readStatxAsync(filename):
     libc = ctypes.CDLL("libc.so.6")
     libc.syscall.argtypes = (
@@ -36,10 +75,12 @@ async def readStatxAsync(filename):
         macros.mask,
         ctypes.byref(statxbuf),
     )
+    filetype = getFileType(statxbuf.stx_mode)
+    filePermissions = getPermissions(statxbuf.stx_mode)
     if result == -1:
         print(f"error: {ctypes.get_errno()}, {os.strerror(ctypes.get_errno())}")
         quit(1)
-    return filename, statxbuf
+    return filename, [statxbuf, filetype, filePermissions]
 
 
 async def main(basepath):

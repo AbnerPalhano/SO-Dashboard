@@ -1,6 +1,8 @@
 import os
 import time
-import sys
+import datetime
+import Model.macros as macros
+import Model.procInfo as procInfo
 
 
 # import tkinter as tk
@@ -98,20 +100,29 @@ class View:
         os.system("clear")
         for file, stat in Statx[0]:
             print(f"\n'{file.decode('utf-8')}'")
-            print(f"Device major: {stat.stx_dev_major}")
-            print(f"Device minor: {stat.stx_dev_minor}")
-            print(f"Inode: {stat.stx_ino}")
-            print(f"Mode: {oct(stat.stx_mode)}")
-            print(f"Number of hard links: {stat.stx_nlink}")
-            print(f"UID: {stat.stx_uid}")
-            print(f"GID: {stat.stx_gid}")
-            print(f"Size: {stat.stx_size} bytes")
-            print(f"Block size: {stat.stx_blksize}")
-            print(f"Number of blocks: {stat.stx_blocks}")
-            print(f"Last access time: {stat.stx_atime.tv_sec}")
-            print(f"Creation time: {stat.stx_btime.tv_sec}")
-            print(f"Last modification time: {stat.stx_mtime.tv_sec}")
-            print(f"Last status change time: {stat.stx_ctime.tv_sec}")
+            print(f"type: {stat[1]}  permissions: {stat[2]}")
+            print(
+                f"Size: {stat[0].stx_size} bytes  Blocks: {stat[0].stx_blocks}  Block size: {stat[0].stx_blksize}"
+            )
+
+            print(
+                f"Device: {stat[0].stx_dev_major},{stat[0].stx_dev_minor}  Inode: {stat[0].stx_ino}  Links: {stat[0].stx_nlink}"
+            )
+            print(
+                f"Access:({oct(stat[0].stx_mode)[-4:]}/{stat[2]})  UID: ({stat[0].stx_uid}/ {procInfo.procUser(stat[0].stx_uid)})  GID: ({stat[0].stx_gid}/ {procInfo.procGroup(stat[0].stx_gid)})"
+            )
+            print(
+                f"Last access time: {datetime.datetime.fromtimestamp(stat[0].stx_atime.tv_sec)}"
+            )
+            print(
+                f"Creation time: {datetime.datetime.fromtimestamp(int(stat[0].stx_btime.tv_sec))}"
+            )
+            print(
+                f"Last modification time: {datetime.datetime.fromtimestamp(stat[0].stx_mtime.tv_sec)}"
+            )
+            print(
+                f"Last status change time: {datetime.datetime.fromtimestamp(stat[0].stx_ctime.tv_sec)}"
+            )
         print(f"\nContent of '{Statx[1].decode('utf-8')}':")
         for file, stat in Statx[0]:
             print(f"{os.path.basename(file.decode('utf-8'))} ", end="")
